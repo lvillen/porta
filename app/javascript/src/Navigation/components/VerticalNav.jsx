@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import { Nav, NavExpandable, NavItem, NavList, NavGroup } from '@patternfly/react-core'
 import { createReactWrapper } from 'utilities/createReactWrapper'
 import 'Navigation/styles/VerticalNav.scss'
@@ -9,24 +9,24 @@ import type { Api } from 'Types'
 type Item = {
   id: string,
   title: string,
-  path: ?string,
-  target: ?string,
-  itemOutOfDateConfig: ?boolean
+  path?: string,
+  target?: string,
+  itemOutOfDateConfig?: boolean
 }
 
 type Section = Item & {
-  items: ?Item[],
-  outOfDateConfig: ?boolean
+  items?: Item[],
+  outOfDateConfig?: boolean
 }
 
 type Props = {
   sections: Section[],
-  activeSection: ?string,
-  activeItem: ?string,
-  currentApi: ?Api
+  activeSection?: string,
+  activeItem?: string,
+  currentApi?: Api
 }
 
-const VerticalNav = ({ sections, activeSection, activeItem, currentApi }: Props) => {
+const VerticalNav = ({ sections, activeSection, activeItem, currentApi }: Props): React.Node => {
   const navSections = sections.map(({ id, title, path, items, outOfDateConfig }) => {
     return items
       ? <NavSection title={title} isSectionActive={id === activeSection} activeItem={activeItem} items={items} key={title} outOfDateConfig={outOfDateConfig}/>
@@ -62,6 +62,6 @@ const NavSection = ({title, isSectionActive, activeItem, items, outOfDateConfig}
   )
 }
 
-const VerticalNavWrapper = (props: Props, containerId: string) => createReactWrapper(<VerticalNav {...props} />, containerId)
+const VerticalNavWrapper = (props: Props, containerId: string): void => createReactWrapper(<VerticalNav {...props} />, containerId)
 
 export { VerticalNav, VerticalNavWrapper }

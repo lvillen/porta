@@ -1,9 +1,12 @@
+// @flow
+
 import React from 'react'
 import { render } from 'enzyme'
 import { ActiveMenuTitle } from 'Navigation/components/ActiveMenuTitle'
+import type { Menu } from 'Types'
 
-function getWrapper (activeMenu, currentApi, apiap = true) {
-  return render(<ActiveMenuTitle activeMenu={activeMenu} currentApi={currentApi} apiap={apiap} />)
+function getWrapper (activeMenu: Menu, currentApi) {
+  return render(<ActiveMenuTitle activeMenu={activeMenu} currentApi={currentApi} />)
 }
 
 it('should return the proper title depending on the current menu', () => {
@@ -27,12 +30,7 @@ it('should return the proper title depending on the current menu', () => {
     .toEqual('Backends')
 })
 
-it('should return the right title and icon when APIAP is disabled', () => {
-  const wrapper = getWrapper('serviceadmin', { name: 'Test' }, false)
-  expect(wrapper.text()).toEqual('Products')
-  expect(wrapper.find('i').first().prop('class')).toEqual('fa fa-cubes')
-})
-
 it('should not return a default title', () => {
+  // $FlowIgnore[incompatible-call] expected to pass no activeMenu
   expect(getWrapper().text()).toEqual('')
 })

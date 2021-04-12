@@ -35,4 +35,13 @@ declare module 'validate.js' {
   declare module.exports: any;
 }
 
+declare module 'jquery' {
+  declare module.exports: JQueryStatic & {
+    flash: {
+      notice: (msg: string) => void,
+      error: (msg: string) => void
+    }
+  };
+}
+
 export type Window = any

@@ -29,7 +29,8 @@ class Api::PlansBaseController < Api::BaseController
   end
 
   def resource(id = params[:id])
-    collection.readonly(false).find_by_id(id)
+    return unless id.present?
+    collection.readonly(false).find(id)
   end
 
   def collection
@@ -41,7 +42,10 @@ class Api::PlansBaseController < Api::BaseController
   end
 
   def find_plans
+    search = ThreeScale::Search.new(params[:search] || params)
     @plans = collection.order_by(params[:sort], params[:direction])
+                       .scope_search(search)
+    @page_plans = @plans.paginate(pagination_params)
   end
 
   def find_issuer
@@ -98,11 +102,19 @@ class Api::PlansBaseController < Api::BaseController
   def destroy
     @plan.destroy
 
-    if block_given?
-      yield
-    else
+    return yield if block_given?
+
+    unless @plan.type == 'ApplicationPlan'
+      # Only Application plans are implemented in React right now
+      ThreeScale::Deprecation.warn "Plans are being migrated to React and this will no longer be used"
+
       flash[:notice] = 'The plan was deleted'
-      redirect_to plans_index_path
+      return redirect_to plans_index_path
+    end
+
+    json = { notice: 'The plan was deleted', id: @plan.id }
+    respond_to do |format|
+      format.json { render json: json, status: :ok }
     end
   end
 
@@ -112,16 +124,14 @@ class Api::PlansBaseController < Api::BaseController
 
   protected
 
-  def generic_masterize_plan(issuer, assoc)
-    masterize_plan do
-      if @plan.nil? || issuer.send(assoc) == @plan
-        issuer.send("#{assoc}=", nil)
-      else
-        issuer.send("#{assoc}=", @plan)
-      end
+  def assign_plan!(issuer, assoc)
+    plan = (!@plan || issuer.send(assoc) == @plan) ? nil : @plan
+    issuer.send("#{assoc}=", plan)
+    issuer.save!
+  end
 
-      issuer.save!
-    end
+  def generic_masterize_plan(issuer, assoc)
+    masterize_plan { assign_plan!(issuer, assoc) }
   end
 
   # this is supposed to be called via ajax and we need only to flash stuff

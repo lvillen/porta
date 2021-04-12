@@ -106,8 +106,17 @@ Then /^I should not see button "([^\"]*)" within "([^"]*)"$/ do |label, selector
 end
 
 Then /^the "([^"]*)" select should not contain "([^"]*)" option$/ do |label, text|
-  select = find_field(label)
-  assert select.all('option', :text => text).empty?, %(The "#{label}" select should not contain "#{text}" option, but it does)
+  if page.has_css?('.pf-c-form__label', text: label)
+    select = find('.pf-c-form__label', text: label).sibling('.pf-c-select')
+    select.find('.pf-c-select__toggle-button').click
+    selector = '.pf-c-select__menu-item'
+  else
+    # DEPRECATED: remove when all selects have been replaced for PF4
+    ThreeScale::Deprecation.warn "[cucumber] Detected a select not using PF4 css"
+    selector = 'option'
+    select = find_field(label)
+  end
+  assert select.all(selector, :text => text).empty?, %(The "#{label}" select should not contain "#{text}" option, but it does)
 end
 
 Then /^the "([^"]*)" select should have "([^"]*)" selected$/ do |label, text|
@@ -168,10 +177,6 @@ Then /^I should not see image "([^"]*)"$/ do |file|
   assert(all('img').none? do |image|
     File.basename(image[:src]) == file
   end)
-end
-
-Then /^I should see the following table:$/ do |table|
-  table.diff!(extract_table('table', 'tr', 'th,td'))
 end
 
 Then /^I should see "([^"]*)" in the "([^"]*)" column and "([^"]*)" row$/ do |text, column, row|

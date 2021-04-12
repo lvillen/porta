@@ -37,17 +37,27 @@ module TopicIndex
     protected
 
     def index_topic
-      return if System::Database.oracle?
+      return unless allow_system_indexation?
 
       SphinxIndexationWorker.perform_later(topic)
+    end
+
+    def allow_system_indexation?
+      !System::Database.oracle? &&
+        ThinkingSphinx::Configuration.new.settings['indexed_models'].include?('Topic')
     end
   end
 
   protected
 
   def sphinx_index
-    return if System::Database.oracle?
+    return unless allow_system_indexation?
 
     SphinxIndexationWorker.perform_later(self)
+  end
+
+  def allow_system_indexation?
+    !System::Database.oracle? &&
+      ThinkingSphinx::Configuration.new.settings['indexed_models'].include?('Topic')
   end
 end

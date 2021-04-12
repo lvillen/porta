@@ -5,7 +5,7 @@ version: 2.1
 upload-coverage: &upload-coverage
   run:
     name: Upload test coverage to Codecov
-    command: bash <(curl --retry 10 --retry-delay 5 --retry-max-time 60 -s https://codecov.io/bash)
+    command: bash <(curl --retry 10 --retry-delay 5 --retry-max-time 60 -s https://codecov.io/bash) -Z || echo "Codecov is not working again..."
 
 persist-vendored-dependencies-to-workspace: &persist-vendored-dependencies-to-workspace
   persist_to_workspace:
@@ -177,6 +177,7 @@ commands: # reusable commands with parameters
           name: Install gems with bundler
           command: |
             echo "Running gems install for database: $DB"
+            echo "$(bundle version)"
             bundle check || bundle install --deployment
             bundle clean
             # remove capybara-webkit source, save more than 400 MB
@@ -805,7 +806,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "d8:d6:e4:53:b3:0e:22:76:01:e0:27:90:a6:c3:fa:df"
+            - "17:be:79:a1:a0:c5:38:84:a7:3c:f2:af:87:d7:f3:cf"
       - checkout-with-submodules
       - run:
           name: Keep production gemfile up to date

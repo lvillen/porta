@@ -115,7 +115,12 @@ const BackendsIndexPage = ({ backendsCount, backends }: Props) => {
           <Title headingLevel="h1" size="2xl">Backends</Title>
         </LevelItem>
         <LevelItem>
-          <Button variant="primary" component="a" href="/p/admin/backend_apis/new">
+          <Button
+            data-testid="backendsIndexCreateBackend-buttonLink"
+            variant="primary"
+            component="a"
+            href="/p/admin/backend_apis/new"
+          >
             Create Backend
           </Button>
         </LevelItem>
@@ -157,6 +162,6 @@ const BackendsIndexPage = ({ backendsCount, backends }: Props) => {
   )
 }
 
-const BackendsIndexPageWrapper = (props: Props, containerId: string) => createReactWrapper(<BackendsIndexPage {...props} />, containerId)
+const BackendsIndexPageWrapper = (props: Props, containerId: string): void => createReactWrapper(<BackendsIndexPage {...props} />, containerId)
 
 export { BackendsIndexPageWrapper }

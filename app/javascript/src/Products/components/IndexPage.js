@@ -118,7 +118,12 @@ const ProductsIndexPage = ({ productsCount, products }: Props) => {
           <Title headingLevel="h1" size="2xl">Products</Title>
         </LevelItem>
         <LevelItem>
-          <Button variant="primary" component="a" href="/apiconfig/services/new">
+          <Button
+            data-testid="productsIndexCreateProduct-buttonLink"
+            variant="primary"
+            component="a"
+            href="/apiconfig/services/new"
+          >
             Create Product
           </Button>
         </LevelItem>
@@ -160,6 +165,6 @@ const ProductsIndexPage = ({ productsCount, products }: Props) => {
   )
 }
 
-const ProductsIndexPageWrapper = (props: Props, containerId: string) => createReactWrapper(<ProductsIndexPage {...props} />, containerId)
+const ProductsIndexPageWrapper = (props: Props, containerId: string): void => createReactWrapper(<ProductsIndexPage {...props} />, containerId)
 
 export { ProductsIndexPageWrapper }

@@ -1,7 +1,8 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import Form from 'react-jsonschema-form'
+import { Button } from '@patternfly/react-core'
 
 import { isNotApicastPolicy } from 'Policies/util'
 import { HeaderButton } from 'Policies/components/HeaderButton'
@@ -19,7 +20,7 @@ type Props = {
   }
 }
 
-const PolicyConfig = ({policy, actions}: Props) => {
+const PolicyConfig = ({policy, actions}: Props): React.Node => {
   const { submitPolicyConfig, removePolicyFromChain, closePolicyConfig, updatePolicyConfig } = actions
   const { humanName, version, summary, description, enabled, configuration, data, removable } = policy
 
@@ -68,16 +69,16 @@ const PolicyConfig = ({policy, actions}: Props) => {
           formData={data}
           onSubmit={onSubmit(policy)}
         >
-          <button className="btn btn-info" type="submit">Update Policy</button>
+          <Button className="btn-info" type="submit">Update Policy</Button>
         </Form>
       }
       { removable &&
-        <div
-          className="PolicyConfiguration-remove btn btn-danger btn-sm"
+        <Button
+          variant="danger"
           onClick={remove}
         >
-          <i className="fa fa-trash"/> Remove
-        </div>
+          Remove
+        </Button>
       }
     </section>
   )

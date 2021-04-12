@@ -42,7 +42,12 @@ const ProductsWidget = ({ newProductPath, productsPath, products }: Props) => (
           Products
         </Title>
         <CardActions>
-          <Button component="a" variant="primary" href={newProductPath}>
+          <Button
+            data-testid="dashboardCreateProduct-buttonLink"
+            component="a"
+            variant="primary"
+            href={newProductPath}
+          >
             Create Product
           </Button>
         </CardActions>
@@ -64,6 +69,6 @@ const ProductsWidget = ({ newProductPath, productsPath, products }: Props) => (
   </Card>
 )
 
-const ProductsWidgetWrapper = (props: Props, containerId: string) => createReactWrapper(<ProductsWidget {...props} />, containerId)
+const ProductsWidgetWrapper = (props: Props, containerId: string): void => createReactWrapper(<ProductsWidget {...props} />, containerId)
 
 export { ProductsWidgetWrapper }
