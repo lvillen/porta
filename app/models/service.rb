@@ -320,6 +320,10 @@ class Service < ApplicationRecord
     metrics.find_by(system_name: 'hits')&.children || metrics.none
   end
 
+  def top_level_metrics
+    metrics.top_level
+  end
+
   # Does this service has metric "hits" with submetrics (methods) defined?
   def has_method_metrics?
     metrics.find_by(system_name: 'hits')&.parent?
@@ -519,6 +523,10 @@ class Service < ApplicationRecord
     DeploymentOption.plugins.include?(deployment_option)
   end
 
+  def create_default_proxy
+    create_proxy! unless proxy
+  end
+
   private
 
   def archive_as_deleted
@@ -537,10 +545,6 @@ class Service < ApplicationRecord
 
   def destroyable?
     destroyed_by_association || !default_or_last?
-  end
-
-  def create_default_proxy
-    create_proxy! unless proxy
   end
 
   def create_default_service_plan

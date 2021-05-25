@@ -39,12 +39,26 @@ end
 
 When /^(?:|I )fill in "([^"]*)" with "([^"]*)"(?: within "([^"]*)")?$/ do |field, value, selector|
   with_scope(selector) do
-    fill_in(field, :with => value, visible: true)
+    if page.has_css?('.pf-c-form__label', text: field)
+      input = find('.pf-c-form__label', text: field).sibling('input')
+      input.set value
+    else
+      # DEPRECATED: remove when all forms implement PF4
+      ThreeScale::Deprecation.warn "[cucumber] Detected a form not using PF4 css"
+      fill_in(field, :with => value, visible: true)
+    end
   end
 end
 
 When /^I fill in "(.+?)" with:$/ do |field, text|
-  fill_in(field, :with => text, visible: true)
+  if page.has_css?('.pf-c-form__label', text: field)
+    input = find('.pf-c-form__label', text: field).sibling('input')
+    input.set value
+  else
+    # DEPRECATED: remove when all forms implement PF4
+    ThreeScale::Deprecation.warn "[cucumber] Detected a form not using PF4 css"
+    fill_in(field, :with => text, visible: true)
+  end
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"(?: within "([^"]*)")?$/ do |value, field, selector|
@@ -75,11 +89,7 @@ end
 When /^(?:|I )select "([^"]*)" from "([^"]*)"(?: within "([^"]*)")?$/ do |value, field, selector|
   with_scope(selector) do
     if page.has_css?('.pf-c-form__label', text: field)
-      select = find('.pf-c-form__label', text: field).sibling('.pf-c-select')
-      within select do
-        find('.pf-c-select__toggle-button').click unless select['class'].include?('pf-m-expanded')
-        click_on(value)
-      end
+      pf4_select(value, from: field)
     else
       # DEPRECATED: remove when all selects have been replaced for PF4
       ThreeScale::Deprecation.warn "[cucumber] Detected a form not using PF4 css"
@@ -90,6 +100,15 @@ When /^(?:|I )select "([^"]*)" from "([^"]*)"(?: within "([^"]*)")?$/ do |value,
         select.find(:xpath, XPath::HTML.option(value)).click
       end
     end
+  end
+end
+
+# TODO: Ideally we would extend Node::Actions#select to satisfy Liskov instead of using a custom method.
+def pf4_select(value, from:)
+  select = find('.pf-c-form__label', text: from).sibling('.pf-c-select')
+  within select do
+    find('.pf-c-select__toggle').click unless select['class'].include?('pf-m-expanded')
+    click_on(value)
   end
 end
 

@@ -11,20 +11,22 @@ import {
   toSelectOption,
   toSelectOptionObject,
   SelectOptionObject
-} from 'utilities/patternfly-utils'
+} from 'utilities'
 import { TableModal } from 'Common'
 
-import type { Record } from 'utilities/patternfly-utils'
+import type { Record } from 'utilities'
 
 type Props<T: Record> = {
   item: T | null,
   items: T[],
   onSelect: (T | null) => void,
   isDisabled?: boolean,
+  isValid?: boolean,
   label: string,
   id: string,
   name?: string,
   helperText?: React.Node,
+  helperTextInvalid?: string,
   placeholderText?: string,
   maxItems?: number,
   header?: string,
@@ -42,10 +44,12 @@ const SelectWithModal = <T: Record>({
   items,
   onSelect,
   isDisabled,
+  isValid,
   label,
   id,
   name,
   helperText,
+  helperTextInvalid,
   placeholderText,
   maxItems = MAX_ITEMS,
   header = HEADER,
@@ -81,8 +85,8 @@ const SelectWithModal = <T: Record>({
 
   const options = getItems(items).map(toSelectOption)
 
-  const handleOnFilter = (e) => {
-    const { value } = e.target
+  const handleOnFilter = (e: SyntheticEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget
     const term = new RegExp(value, 'i')
 
     const filteredRecords: T[] = value !== '' ? items.filter(b => term.test(b.name)) : items
@@ -100,6 +104,8 @@ const SelectWithModal = <T: Record>({
         label={label}
         fieldId={id}
         helperText={helperText}
+        helperTextInvalid={helperTextInvalid}
+        isValid={isValid}
       >
         {item && <input type="hidden" name={name} value={item.id} />}
         <Select

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useState, useRef } from 'react'
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
-import { CSRFToken } from 'utilities/utils'
+import { CSRFToken } from 'utilities'
 
 const CARD_OPTIONS = {
   iconStyle: 'solid',
@@ -62,7 +62,7 @@ const CreditCardErrors = (props) => (
 
 type StripeCardFormProps = {
   setupIntentSecret: string,
-  billingAddressDetails: string,
+  billingAddressDetails: {},
   successUrl: string,
   isCreditCardStored: boolean
 }
