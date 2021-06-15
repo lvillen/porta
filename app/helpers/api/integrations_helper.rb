@@ -41,10 +41,6 @@ module Api::IntegrationsHelper
     @service.proxy.apicast_configuration_driven
   end
 
-  def can_toggle_apicast_version?
-    current_account.provider_can_use?(:apicast_v2) && current_account.provider_can_use?(:apicast_v1)
-  end
-
   def apicast_custom_urls?
     # the idea would be to keep this rolling update disabled for saas
     Rails.application.config.three_scale.apicast_custom_url
@@ -61,17 +57,13 @@ module Api::IntegrationsHelper
   end
 
   def apicast_endpoint_input_hint(service, environment:)
+    service.deployment_option ||= 'hosted'
     openshift = Rails.application.config.three_scale.apicast_custom_url && service.proxy.hosted?
     t( "formtastic.hints.proxy.endpoint_apicast_2#{'_openshift' if openshift}_html", environment_name: environment)
   end
 
   def deployment_option_is_service_mesh?(service)
     service.deployment_option =~ /^service_mesh/
-  end
-
-  def edit_deployment_option_title(service)
-    title = deployment_option_is_service_mesh?(service) ? 'Service Mesh' : 'APIcast'
-    t(:edit_deployment_configuration, scope: :api_integrations_controller, deployment: title )
   end
 
   def promote_to_staging_button_options(proxy)
