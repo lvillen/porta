@@ -478,20 +478,13 @@ class ProxyTest < ActiveSupport::TestCase
     end
   end
 
+ #TODO: remove the test when the ApicastV1DeploymentService class is removed
   test 'save_and_deploy' do
     proxy = FactoryBot.build(:proxy,
                               api_backend: 'http://example.com',
                               api_test_path: '/path',
                               apicast_configuration_driven: false)
-    ::ApicastV1DeploymentService.any_instance.expects(:deploy).with(proxy).returns(true)
-
-    analytics.expects(:track).with('Sandbox Proxy Deploy', success: true)
-    analytics.expects(:track).with('Sandbox Proxy updated',
-                                   api_backend: 'http://example.com:80',
-                                   api_test_path: '/path',
-                                   success: true)
-    analytics.expects(:track).with('APIcast Hosted Version Change', {enabled: false, service_id: proxy.service_id, deployment_option: 'hosted'})
-    Logic::RollingUpdates.stubs(skipped?: true)
+    ::ApicastV1DeploymentService.any_instance.expects(:deploy).with(proxy).returns(true).never
 
     assert proxy.save_and_deploy
     assert proxy.persisted?

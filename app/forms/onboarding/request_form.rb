@@ -50,7 +50,6 @@ class Onboarding::RequestForm < Reform::Form
 
   def test_api!
     return unless ProxyDeploymentService.call(model)
-    
     proxy_test_service = ProxyTestService.new(model)
 
     status = proxy_test_service.perform
